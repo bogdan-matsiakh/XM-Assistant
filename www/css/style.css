@@ -1,0 +1,63 @@
+.marker-cluster {
+	display: flex;
+    justify-content: center;
+}
+.marker-container {
+	display: flex;
+	flex-direction: column;
+    justify-content: center;
+    padding: 5px;
+}
+.marker-container b {
+	white-space: nowrap;
+}
+
+.enlightened-text {
+	color: #28f428;
+}
+
+.resistance-text {
+	color: #00c2ff;
+}
+
+.neutral-text {
+	color: grey;
+}
+
+.hexagon {
+  position: relative;
+  width: 24px; 
+  height: 13.86px;
+  margin: 6.93px 0;
+  border-left: solid 1px #56c75d;
+  border-right: solid 1px #56c75d;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.hexagon:before,
+.hexagon:after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 16.97px;
+  height: 16.97px;
+  -webkit-transform: scaleY(0.5774) rotate(-45deg);
+  -ms-transform: scaleY(0.5774) rotate(-45deg);
+  transform: scaleY(0.5774) rotate(-45deg);
+  background-color: inherit;
+  left: 1.5147px;
+}
+
+.hexagon:before {
+  top: -8.4853px;
+  border-top: solid 1.4142px #56c75d;
+  border-right: solid 1.4142px #56c75d;
+}
+
+.hexagon:after {
+  bottom: -8.4853px;
+  border-bottom: solid 1.4142px #56c75d;
+  border-left: solid 1.4142px #56c75d;
+}
+
