@@ -1,19 +1,19 @@
 .marker-cluster {
-	display: flex;
-    justify-content: center;
+     display: flex;
+     justify-content: center;
 }
 .marker-container {
-	display: flex;
-	flex-direction: column;
-    justify-content: center;
-    padding: 5px;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     padding: 5px;
 }
 .marker-container b {
-	white-space: nowrap;
+     white-space: nowrap;
 }
 
 .enlightened-text {
-	color: #28f428;
+	color: green;
 }
 
 .resistance-text {
@@ -22,6 +22,16 @@
 
 .neutral-text {
 	color: grey;
+}
+
+#menu {
+     width: 300px;
+     height: 300px;
+     border: 1px solid black;
+     position: absolute;
+     top:10px;
+     left:0px;
+     transition: top 1s ease-out 0.5s;
 }
 
 .hexagon {

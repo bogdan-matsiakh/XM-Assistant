@@ -17,51 +17,13 @@
     }
     function onLocationFound(e) {
         xhr.get('http://ec2-52-29-134-247.eu-central-1.compute.amazonaws.com:8080/sprut-api/portals').success(onPortalsReceived);
-        
-        // markerClusters.on('clustermouseover', function(a) {
-        //     var markers = a.layer.getAllChildMarkers(),
-        //         eCounter = 0,
-        //         rCounter = 0;
-        //     markers.forEach(function(marker) {
-        //         if (marker.options.team === 'E') {
-        //             eCounter++;
-        //         } else {
-        //             rCounter++
-        //         }
-        //     })
-        //     markerClusterPopup = L.popup()
-        //         .setLatLng(a.layer._cLatLng)
-        //         .setContent('<p>Enlightened portals: '+ eCounter + '<br />Resistance portals: '+ rCounter + '</p>')
-        //         .openOn(map);
-        // });
     }
 
     function onPortalsReceived(portals) {
         var radius = 10,
+            portalsCount = portals.length,
             markerClusters = L.markerClusterGroup({
-                iconCreateFunction: function(cluster) {
-                    var childCount = cluster.getChildCount(),
-                        iconSize = childCount > 500 ? 'large' : (childCount > 50 ? 'medium' : 'small'),
-                        markers = cluster.getAllChildMarkers(),
-                        eCounter = 0,
-                        rCounter = 0,
-                        nCounter = 0;
-                    
-                    markers.forEach(function(marker) {
-                        if (marker.options.team === 'E') {
-                            eCounter++;
-                        } else if (marker.options.team === 'R') {
-                            rCounter++;
-                        } else {
-                            nCounter++;
-                        }
-                    })
-                    return L.divIcon({
-                        html: '<div class="marker-container"><b class="enlightened-text">E: ' + eCounter + '</b><b class="resistance-text">R: ' + rCounter + '</b><b class="neutral-text">N: ' + nCounter + '</b></div>',
-                        className: 'marker-cluster marker-cluster-' + iconSize,
-                        iconSize: null
-                    });
-                }
+                iconCreateFunction: iconCreateFunction(portalsCount)
             }),
             markerClusterPopup;
         
@@ -79,6 +41,57 @@
             marker.on('click', onMarkerClick(portal));
         });
         map.addLayer(markerClusters);
+    }
+    var percentColors = [
+        { pct: 0.0, color: { r: 0x22, g: 0xcc, b: 0x22 } },
+        { pct: 0.5, color: { r: 0xcc, g: 0xcc, b: 0x22 } },
+        { pct: 1.0, color: { r: 0xcc, g: 0x22, b: 0x22 } } ];
+
+    var getColorForPercentage = function(pct) {
+        for (var i = 1; i < percentColors.length - 1; i++) {
+            if (pct < percentColors[i].pct) {
+                break;
+            }
+        }
+        var lower = percentColors[i - 1];
+        var upper = percentColors[i];
+        var range = upper.pct - lower.pct;
+        var rangePct = (pct - lower.pct) / range;
+        var pctLower = 1 - rangePct;
+        var pctUpper = rangePct;
+        var color = {
+            r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+            g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+            b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+        };
+        return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+        // or output as hex if preferred
+    }  
+    function iconCreateFunction(portalsCount) {
+        return function(cluster) {
+            var childCount = cluster.getChildCount(),
+                iconSize = childCount > 500 ? 'large' : (childCount > 50 ? 'medium' : 'small'),
+                markers = cluster.getAllChildMarkers(),
+                eCounter = 0,
+                rCounter = 0,
+                nCounter = 0,
+                bgColor = getColorForPercentage(childCount * 50 / portalsCount);
+            
+            markers.forEach(function(marker) {
+                if (marker.options.team === 'E') {
+                    eCounter++;
+                } else if (marker.options.team === 'R') {
+                    rCounter++;
+                } else {
+                    nCounter++;
+                }
+            })
+            return L.divIcon({
+                html: '<div class="marker-container" style="background-color: ' + bgColor + ' "><b class="enlightened-text">E: ' + eCounter + '</b><b class="resistance-text">R: ' + rCounter + '</b><b class="neutral-text">N: ' + nCounter + '</b></div>',
+                className: 'marker-cluster',
+                iconSize: null
+            });
+        }
     }
 
     function onMarkerClick(portal) {
